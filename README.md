@@ -1,4 +1,6 @@
 # Realtime-Chat
-Realtime chat application in NodeJS
+Real time chat application in NodeJS and MongoDB.
 
-Readme
+Simple chat app where people can talk to each other in real time.
+
+More to come.
