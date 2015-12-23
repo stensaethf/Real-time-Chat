@@ -9,7 +9,7 @@
 			<input type="text" class="chat-name" placeholder="Enter your username">
 			<div class="chat-messages"></div>
 			<textarea placeholder="Enter message"></textarea>
-			<div class="chat-status">Status: <span>Error</span></div>
+			<div class="chat-status">Status: <span>Idle</span></div>
 		</div>
 
 		<script src="http://127.0.0.1.8080/socket.io/socket.io.js"></script>
@@ -18,11 +18,25 @@
 			(function() {
 				var getNode = function(s) {
 					return document.querySelector(s);
-				}
+				};
 
 				// get required nodes
-				textarea = getNode('.chat textarea');
-				chatName = getNode('.chat-name');
+				var status = getNode('.chat-status span');
+				var textarea = getNode('.chat textarea');
+				var chatName = getNode('.chat-name');
+
+				var statusDefault = status.textConent;
+
+				var setStatus = function() {
+					status.textConent = s;
+
+					if(s != statusDefault) {
+						var delay = setTimeout(function {
+							setStatus(statusDefault);
+							clearInterval(delay);
+						}, 3000);
+					}
+				};
 
 				try {
 					var socket = io.connect('http://127.0.0.1:8080');
@@ -31,6 +45,14 @@
 				}
 
 				if(socket != undefined) {
+					// listen for a status
+					socket.on('status', function(data) {
+						setStatus((typeof data === 'object') ? data.message : data);
+						if(data.clear === true) {
+							textarea.value = '';
+						}
+					});
+
 					// listen for keydown
 					textarea.addEventListener('keydown', function(event) {
 						var self = this;
