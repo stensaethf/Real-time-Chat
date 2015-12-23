@@ -24,6 +24,7 @@
 				var status = getNode('.chat-status span');
 				var textarea = getNode('.chat textarea');
 				var chatName = getNode('.chat-name');
+				var messages = getNode('.chat-messages');
 
 				var statusDefault = status.textConent;
 
@@ -45,6 +46,22 @@
 				}
 
 				if(socket != undefined) {
+					// listen for output
+					socket.on('output', function(data) {
+						if(data.length) {
+							// loop through results
+							for(var x = 0; x < data.length; x++) {
+								var message = document.createElement('div');
+								message.setAttribute('class', 'chat-message');
+								message.textConent = data[x].name + ':' + data[x].message;
+							
+								// append
+								messages.appendChild(message);
+								messages.insertBefore(message, messages.firstChild);
+							}
+						}
+					});
+
 					// listen for a status
 					socket.on('status', function(data) {
 						setStatus((typeof data === 'object') ? data.message : data);
